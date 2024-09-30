@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"runtime"
+)
 
 const (
 	banner = `
@@ -9,21 +13,20 @@ const (
 	 ) _ ((  O )(  O )) __/
 	(____/ \__/  \__/(__) 
 	`
-	usage = `
-	Usage:
-	-url
-		Target HTTP server URL (required)
-	-n 
-		Number of requests to make
-	-c
-		Concurrency level
-	`
 )
 
 func showBanner() string { return banner[1:] }
-func showUsage() string { return usage[1:] }
 
 func main() {
+	f := &flags{
+		 num: 100,
+		 clevel: runtime.NumCPU(),
+	}
+
+	if err := f.parse(); err != nil {
+		os.Exit(1)
+	}
 	fmt.Println(showBanner())
-	fmt.Println(showUsage())
+	fmt.Printf("Making %d requests to %s with a concurrency level of %d.\n", f.num, f.url, f.clevel)
+	
 }
